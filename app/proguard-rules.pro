@@ -1,0 +1,2 @@
+-keep class com.remoo.app.data.models.** { *; }
+-keepclassmembers class com.remoo.app.data.models.** { *; }
