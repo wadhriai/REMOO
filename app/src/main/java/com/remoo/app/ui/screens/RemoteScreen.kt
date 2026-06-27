@@ -127,6 +127,7 @@ fun RemoteScreen(
                 when (device.type) {
                     DeviceType.TV -> TvRemoteLayout(keys, viewModel)
                     DeviceType.AC -> AcRemoteLayout(keys, viewModel)
+                    DeviceType.ANDROID_BOX -> BoxRemoteLayout(keys, viewModel)
                     else -> GenericRemoteLayout(keys, viewModel)
                 }
             } else {
@@ -262,6 +263,77 @@ private fun NumberPad(keyMap: Map<String, RemoteKey>, viewModel: RemoteViewModel
                     isWide = true
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun BoxRemoteLayout(keys: List<RemoteKey>, viewModel: RemoteViewModel) {
+    val keyMap = keys.associateBy { it.id }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        // Power / Back / Menu row
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            keyMap["back"]?.let { RemoteButton(it.icon, it.label, { viewModel.pressKey(it.id) }) }
+            keyMap["power"]?.let {
+                RemoteButton(it.icon, it.label, { viewModel.pressKey(it.id) }, size = 68.dp, isHighlighted = true)
+            }
+            keyMap["menu"]?.let { RemoteButton(it.icon, it.label, { viewModel.pressKey(it.id) }) }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // D-pad cluster
+        DPadCluster(keyMap, viewModel)
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Home / Settings row
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            keyMap["home"]?.let { RemoteButton(it.icon, it.label, { viewModel.pressKey(it.id) }) }
+            keyMap["settings"]?.let { RemoteButton(it.icon, it.label, { viewModel.pressKey(it.id) }) }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+        HorizontalDivider(color = Divider, modifier = Modifier.padding(horizontal = 8.dp))
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Media controls
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            keyMap["rewind"]?.let { RemoteButton(it.icon, it.label, { viewModel.pressKey(it.id) }) }
+            keyMap["play_pause"]?.let {
+                RemoteButton(it.icon, it.label, { viewModel.pressKey(it.id) }, size = 64.dp, isHighlighted = true)
+            }
+            keyMap["fast_forward"]?.let { RemoteButton(it.icon, it.label, { viewModel.pressKey(it.id) }) }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Volume row
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            keyMap["vol_down"]?.let { RemoteButton(it.icon, it.label, { viewModel.pressKey(it.id) }) }
+            keyMap["mute"]?.let { RemoteButton(it.icon, it.label, { viewModel.pressKey(it.id) }) }
+            keyMap["vol_up"]?.let { RemoteButton(it.icon, it.label, { viewModel.pressKey(it.id) }) }
         }
     }
 }
